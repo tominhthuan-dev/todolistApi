@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 
 import { TodosService } from './todos.service';
@@ -18,10 +19,37 @@ export class TodosController {
   ) {}
 
   @Get()
-  findAll() {
-    return this.todosService.findAll();
+  findAll(@Query('userId') userId: string) {
+    if (userId) {
+      return this.todosService.findAllByUserId(Number(userId));
+    } else {
+      return [];
+    }
   }
 
+  @Get('user/:userId')
+  findAllByUserId(@Param('userId') userId: string) {
+    return this.todosService.findAllByUserId(Number(userId));
+  }
+
+  @Post()
+  create(@Body() body: any) {
+    return this.todosService.create(body);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.todosService.delete(Number(id));
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body('title') title: string,
+  ) {
+    return this.todosService.update(Number(id), title);
+  }
+  /*
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.todosService.findOne(
@@ -29,10 +57,7 @@ export class TodosController {
     );
   }
 
-  @Post()
-  create(@Body() body: any) {
-    return this.todosService.create(body);
-  }
+  
 
   @Patch(':id')
   update(
@@ -51,4 +76,5 @@ export class TodosController {
       Number(id),
     );
   }
+    */
 }

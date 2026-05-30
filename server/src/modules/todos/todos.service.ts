@@ -2,35 +2,36 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { TodosRepository } from './todos.repository';
 
 @Injectable()
 export class TodosService {
-  private todos = [
-    {
-      id: 1,
-      title: 'Learn NestJS',
-    },
-    {
-      id: 2,
-      title: 'Build a REST API',
-    },
-    {
-      id: 3,
-      title: 'Deploy to production',
-    },
-    {
-      id: 4,
-      title: 'Write documentation',
-    },
-  ];
+  constructor(private readonly todosRepository: TodosRepository) {}
 
-  findAll() {
-    return this.todos.map(todo => ({
-      ...todo,
-    }));
+  findAllByUserId(userId: number) {
+    return this.todosRepository.findAllByUserId(userId);
   }
 
-  findOne(id: number) {
+  create(body: any) {
+    const newTodo = {
+      id: Date.now(),
+      title: body.title,
+      userId: body.userId,
+    };
+
+    this.todosRepository.create(newTodo);
+
+    return newTodo;
+  }
+
+  delete(id: number) {
+    return this.todosRepository.delete(id);
+  }
+
+  update(id: number, title: string) {
+    return this.todosRepository.update(id, title);
+  }
+  /*findOne(id: number) {
     const todo = this.todos.find(todo => todo.id === id);
     if (!todo) {
       throw new NotFoundException('Todo not found');
@@ -68,5 +69,5 @@ export class TodosService {
     this.todos = this.todos.filter(item => item.id !== todo.id);
 
     return {message:'Todo deleted successfully'};
-  }
+  }*/
 }

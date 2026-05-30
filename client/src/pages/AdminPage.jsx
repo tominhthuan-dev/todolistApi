@@ -10,6 +10,7 @@ function AdminPage({currentUser, users, onLogout }) {
             <p>Username:{user.username}</p>
             <p>Password:{user.password}</p>
             <p>Role:{user.role}</p>
+            
           </div>
         ))
       }
