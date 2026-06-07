@@ -6,9 +6,9 @@ export class AuthService {
     constructor(private authRepository: AuthRepository) {}
 
     // đăng nhập
-    login(body: any) {
+    async login(body: any) {
         // tìm user
-        const user = this.authRepository.findByUsername( body.username);
+        const user = await this.authRepository.findByUsername( body.username);
         // không tìm thấy user
         if (!user) {
             throw new UnauthorizedException("Sai tài khoản");

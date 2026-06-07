@@ -31,17 +31,16 @@ export class TodosController {
   findAllByUserId(@Param('userId') userId: string) {
     return this.todosService.findAllByUserId(Number(userId));
   }
-
+  
   @Post()
   create(@Body() body: any) {
     return this.todosService.create(body);
   }
-
-  @Delete(':id')
+@Delete(':id')
   remove(@Param('id') id: string) {
     return this.todosService.delete(Number(id));
   }
-
+  
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -49,32 +48,4 @@ export class TodosController {
   ) {
     return this.todosService.update(Number(id), title);
   }
-  /*
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.todosService.findOne(
-      Number(id),
-    );
-  }
-
-  
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() body: any,
-  ) {
-    return this.todosService.update(
-      Number(id),
-      body,
-    );
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.todosService.remove(
-      Number(id),
-    );
-  }
-    */
 }

@@ -1,34 +1,20 @@
 import { Injectable} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+
+import { User } from "../entities/user.entity";
 
 @Injectable()
 export class AuthRepository {
-    // fake database
-    private users = [
-    {
-        id: 1,
-        username: "admin",
-        password: "admin",
-        role: "admin",
-    },
-    {
-        id: 2,
-        username: "user1",
-        password: "user1",
-        role: "user",
-    },
-    {
-        id: 3,
-        username: "user2",
-        password: "user2",
-        role: "user",
-    },
-  ];
-
+    constructor(
+        @InjectRepository(User)
+        private usersRepository: Repository<User>,
+    ) {}
 
     // tìm user theo username
     findByUsername(username: string) {
-        return this.users.find(
-            (user) => user.username === username,
-        );
+        return this.usersRepository.findOne({
+            where: { username },
+        });
     }
 }

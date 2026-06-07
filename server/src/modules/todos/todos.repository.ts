@@ -1,44 +1,46 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { Todo } from '../entities/todo.entity';
 
 @Injectable()
 export class TodosRepository {
-    private todos = [
-        { 
-            id: 1, 
-            title: 'Learn NestJS1',
-            userId: 2,
-         },
-        { 
-            id: 2, 
-            title: 'Build a TODO app', 
-            userId: 2,
-        },
-        { 
-            id: 3, 
-            title: 'Deploy the app',
-            userId: 3,
-        },
-    ];
+    constructor(
+        @InjectRepository(Todo)
+        private todoRepository: Repository<Todo>,
+    ) {}
 
-    findAllByUserId(userId: number) {
-        return this.todos.filter(todo => todo.userId === userId);
+    async findAllByUserId(userId: number) {
+        //return this.todos.filter(todo => todo.userId === userId);
+        return this.todoRepository.find({
+            where: { user_id: userId },
+        });
     }
 
-    create(todo: any)  {
-        this.todos.push(todo);
+    async create(title: string, userId: number) {
+        const newTodo = this.todoRepository.create({
+            title,
+            user_id: userId,
+        });
+        return await this.todoRepository.save(newTodo);
     }
 
-    delete(id: number) {
-        this.todos = this.todos.filter(todo => todo.id !== id);
-        return { message: `Todo with id ${id} deleted successfully` };
+    async delete(id: number) {
+        const result = await this.todoRepository.delete(id);
+        if (result.affected === 0) {
+            throw new NotFoundException(`Todo with id ${id} not found`);
+        }
+        return { message: `xóa thành công` };
     }
 
-    update(id: number, title: string) {
-        const todo = this.todos.find(todo => todo.id === id);
+    async update(id: number, title: string) {
+        const todo = await this.todoRepository.findOne({ where: { id } });
         if (!todo) {
             throw new NotFoundException(`Todo with id ${id} not found`);
         }
         todo.title = title;
-        return { ...todo };
+        return await this.todoRepository.save(todo);
     }
+
 }

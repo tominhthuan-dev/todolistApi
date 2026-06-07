@@ -1,4 +1,15 @@
-function AdminPage({currentUser, users, onLogout }) {
+import { useEffect, useState } from "react";
+import { getUsersApi } from "../services/userService";
+
+function AdminPage({currentUser, onLogout }) {
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const data = await getUsersApi();
+      setUsers(data);
+    };
+    fetchUsers();
+  }, []);
   return (
     <div>
       <h1>Welcome {currentUser.username}</h1>
