@@ -12,9 +12,9 @@ function UserPage({ currentUser, onLogout }) {
     useEffect(() => {
         const fetchTodos = async () => {
             try { 
-                const dataTodo = await getTodosApi(currentUser.id);
+                const dataTodo = await getTodosApi(currentUser.sub);
                 console.log("Fetched todos:", dataTodo);
-                console.log("Current user ID:", currentUser.id);
+                console.log("Current user ID:", currentUser.sub);
                 setTodosByUser(dataTodo);
             } catch (error) {
                 console.error("Error fetching todos:", error);
@@ -72,8 +72,11 @@ function UserPage({ currentUser, onLogout }) {
 
   return (
     <div>
-      <h1>Welcome {currentUser.username}</h1>
-      <button onClick={onLogout}>Logout</button>
+        <div className="welcome-bar">
+            <h1>Welcome {currentUser.username}</h1>
+            <button className="logout-button" onClick={onLogout}>Logout</button>
+        </div> 
+      
       <Header />
       <TodoForm 
         key={editTodo?.id ?? "new"}

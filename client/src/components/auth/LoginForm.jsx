@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { loginApi } from "../../services/authService";
+import useAuth from "../../hooks/useAuth";
 
-function LoginForm({ setCurrentUser }) {
+function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const { login } = useAuth();
   const handleLogin = async() => {
     if (!username.trim() || !password.trim()) {
       alert("Nhập đầy đủ thông tin");
@@ -12,42 +12,34 @@ function LoginForm({ setCurrentUser }) {
     }
 
     try {
-      const user = await loginApi({ username, password });
-      console.log("Login successful:", user);
-      setCurrentUser(user);
-      setUsername("");
-      setPassword("");
+      await login(username, password);
     } catch (error) {
-      console.error("Login error:", error);
-      const message = error?.response?.data?.message ?? "Sai tài khoản hoặc mật khẩu";
-      alert(message);
-    }
+      alert("Đăng nhập thất bại");
+    }     
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    <div className="auth-card">
+      <h1 className="auth-title">Đăng nhập</h1>
 
       <input
+        className="auth-input"
         type="text"
-        placeholder="username"
+        placeholder="Tên đăng nhập"
         value={username}
-        onChange={(e) =>
-          setUsername(e.target.value)
-        }
+        onChange={(e) => setUsername(e.target.value)}
       />
 
       <input
+        className="auth-input"
         type="password"
-        placeholder="password"
+        placeholder="Mật khẩu"
         value={password}
-        onChange={(e) =>
-          setPassword(e.target.value)
-        }
+        onChange={(e) => setPassword(e.target.value)}
       />
 
-      <button onClick={handleLogin}>
-        Login
+      <button className="auth-button" onClick={handleLogin}>
+        Đăng nhập
       </button>
     </div>
   );

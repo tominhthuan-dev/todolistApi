@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getUsersApi } from "../services/userService";
 
 function AdminPage({currentUser, onLogout }) {
+  
+  console.log("AdminPage render");
   const [users, setUsers] = useState([]);
   useEffect(() => {
     const fetchUsers = async () => {

@@ -1,11 +1,9 @@
 import LoginForm from "../components/auth/LoginForm";
 
-function LoginPage({ setCurrentUser }) {
+function LoginPage() {
   return (
     <div>
-      <LoginForm
-        setCurrentUser={setCurrentUser}
-      />
+      <LoginForm/>
     </div>
   );
 }

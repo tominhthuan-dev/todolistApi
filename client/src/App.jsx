@@ -1,30 +1,32 @@
-import { useState } from "react";
 import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
 import UserPage from "./pages/UserPage";
+import RegisterPage from "./pages/RegisterPage";
+import useAuth from "./hooks/useAuth";
+import "./App.css";
+
 
 function App() {
+   
+  const { currentUser, isLoading, logout } = useAuth();
   
-  const [currentUser, setCurrentUser] = useState(null);
-
-  const handleLogout = () => {
-    setCurrentUser(null);
-  };
-
+  if (isLoading) {
+    return <div>Loading...</div>;
+  } 
   // NẾU CHƯA LOGIN
   if (!currentUser) {
-    console.log("Current user:", currentUser);
     return (
-      <LoginPage
-        setCurrentUser={setCurrentUser}
-      />
+      <div className="auth-pages">
+        <LoginPage />
+        <RegisterPage />
+      </div>
     );
   }
 
   if (currentUser.role === "admin") {
     return (
       <AdminPage 
-        onLogout={handleLogout}
+        onLogout={logout}
         currentUser={currentUser}
       />
     );
@@ -35,7 +37,7 @@ function App() {
     <UserPage
       //chức năng login
       currentUser={currentUser}
-      onLogout={handleLogout}
+      onLogout={logout}
     />
   </>
   );

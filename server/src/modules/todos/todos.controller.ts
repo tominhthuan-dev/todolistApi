@@ -8,8 +8,10 @@ import {
   Patch,
   Post,
   Query,
+  Request, 
 } from '@nestjs/common';
-
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { UseGuards } from '@nestjs/common';
 import { TodosService } from './todos.service';
 
 @Controller('todos')
@@ -32,9 +34,10 @@ export class TodosController {
     return this.todosService.findAllByUserId(Number(userId));
   }
   
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() body: any) {
-    return this.todosService.create(body);
+  create(@Body() body: { title: string; userId: number }, @Request() request) {
+    return this.todosService.create(body.title, request.user.sub);
   }
 @Delete(':id')
   remove(@Param('id') id: string) {

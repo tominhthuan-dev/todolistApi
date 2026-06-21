@@ -1,34 +1,60 @@
-import axios from "axios";
+import axiosClient from "./axios/axiosClient";
 
-const API_URL ="http://localhost:3000";
-
-export const getTodosApi =
-  async (userId) => {
+export const getTodosApi = async (userId) => {
+  const token = localStorage.getItem("token");
     const response =
-      await axios.get(
-        `${API_URL}/todos`,
-        { params: { userId } } 
+      await axiosClient.get(
+        `/todos`,
+        { 
+          params: { userId }, 
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
     return response.data;
 };
 
-export const createTodoApi =
-  async (data) => {
-    const response = await axios.post(`${API_URL}/todos`, data);
+export const createTodoApi = async (data) => {
+    const token = localStorage.getItem("token");
+    const response = await axiosClient.post(
+      `/todos`, 
+      data, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
 };
 
 export const deleteTodoApi = async (id) => {
-
-  const response = await axios.delete(`${API_URL}/todos/${id}`);
+  const token = localStorage.getItem("token");
+  const response = await axiosClient.delete(
+    `/todos/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 
   return response.data;
 };
 
 export const updateTodoApi = async (id, data) => {
-
-  const response = await axios.patch(`${API_URL}/todos/${id}`, data);
+  const token = localStorage.getItem("token");
+  const response = await axiosClient.patch(
+    `/todos/${id}`,
+    data, 
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return response.data;
 };

@@ -12,8 +12,8 @@ export class TodosService {
     return await this.todosRepository.findAllByUserId(userId);
   }
   
-  async create(body: any) {
-    return await this.todosRepository.create(body.title, body.userId);
+  async create(title: string, userId: number) {
+    return await this.todosRepository.create(title, userId);
   }
 
   async delete(id: number) {
