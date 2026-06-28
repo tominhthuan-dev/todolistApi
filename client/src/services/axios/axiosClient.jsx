@@ -16,24 +16,18 @@ axiosClient.interceptors.request.use((config)=>{
     return Promise.reject(error);
 });
 
-// RESPONSE INTERCEPTOR
+// RESPONSE INTERCEPTOR batws moi 401
 axiosClient.interceptors.response.use(
 
     (response) => response,
 
     async (error) => {
 
-        const originalRequest =
-            error.config;
+        const originalRequest = error.config;
 
-        if (
-            error.response?.status === 401 &&
-            !originalRequest._retry
-        ) {
+        if (error.response?.status === 401 && !originalRequest._retry ) {
 
-            console.log(
-                "Access Token hết hạn"
-            );
+            console.log( "Access Token hết hạn" );
 
             originalRequest._retry = true;
 
@@ -50,41 +44,25 @@ axiosClient.interceptors.response.use(
                     }
                 );
 
-                const newAccessToken =
-                    refreshResponse.data
-                        .access_token;
+                const newAccessToken = refreshResponse.data.access_token;
 
-                localStorage.setItem(
-                    "token",
-                    newAccessToken
-                );
+                localStorage.setItem("token", newAccessToken);
 
-                originalRequest.headers.Authorization =
-                    `Bearer ${newAccessToken}`;
+                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
-                return axiosClient(
-                    originalRequest
-                );
+                return axiosClient( originalRequest );
 
             } catch {
 
-                localStorage.removeItem(
-                    "token"
-                );
+                localStorage.removeItem( "token" );
 
-                localStorage.removeItem(
-                    "refreshToken"
-                );
+                localStorage.removeItem( "refreshToken" );
 
-                return Promise.reject(
-                    error
-                );
+                return Promise.reject( error );
             }
         }
 
-        return Promise.reject(
-            error
-        );
+        return Promise.reject( error );
     }
 );
 

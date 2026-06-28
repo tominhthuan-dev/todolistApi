@@ -19,8 +19,8 @@ export class AdminController {
         return this.adminService.findAllUsers();
     }
 
-    @Get('profile')
-    @UseGuards(JwtAuthGuard)
+    @Get('profile')//methor
+    @UseGuards(JwtAuthGuard)//?
     getProfile(@Request() request) {
         return request.user;
     }

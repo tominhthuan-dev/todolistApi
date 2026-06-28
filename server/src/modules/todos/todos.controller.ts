@@ -34,7 +34,7 @@ export class TodosController {
     return this.todosService.findAllByUserId(Number(userId));
   }
   
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)//chech token còn quyền hay ko
   @Post()
   create(@Body() body: { title: string; userId: number }, @Request() request) {
     return this.todosService.create(body.title, request.user.sub);

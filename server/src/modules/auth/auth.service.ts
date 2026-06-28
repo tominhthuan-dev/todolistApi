@@ -11,14 +11,14 @@ export class AuthService {
     ) {}
 
     // đăng nhập
-    async login(body: { username: string; password: string }) {
+    async login(body: { username: string; password: string }): Promise<{access_token: string; refresh_token: string;}> {
         // tìm user
         const user = await this.usersService.findByUsername(body.username);
         // không tìm thấy user
         if (!user) {
             throw new UnauthorizedException("Sai tài khoản");
         }
-        // sai password
+        // so sánh mật khẩu người dùng nhập với mật khẩu đã hash trong db
         const isMatch = await bcrypt.compare(body.password, user.password);
         if (!isMatch) {
             throw new UnauthorizedException("Sai mật khẩu");
@@ -28,19 +28,9 @@ export class AuthService {
         // payload chứa thông tin user, sẽ được mã hóa vào JWT token
         const payload = {sub: user.id, username: user.username, role: user.role}; 
         //tạo JWT token
-        const accessToken = this.jwtService.sign(
-            payload,
-            {
-                expiresIn: '30s',
-            }
-        );
-        //tạo refreshToken
-        const refreshToken = this.jwtService.sign(
-            payload,
-            {
-                expiresIn: '1d',
-            }
-        );
+        const accessToken = this.jwtService.sign( payload,{ expiresIn: '30s'});
+        // Refresh Token dùng để cấp Access Token mới
+        const refreshToken = this.jwtService.sign( payload, { expiresIn: '1d'});
         return {
             access_token: accessToken,
             refresh_token: refreshToken, 
@@ -54,9 +44,12 @@ export class AuthService {
         if (existingUser) {
             throw new UnauthorizedException("Username đã tồn tại");
         }
+        
+        // Băm mật khẩu trước khi lưu database
         const hashedPassword = await bcrypt.hash(body.password, 10);
         // tạo user mới với role mặc định là "user"
         const newUser = await this.usersService.createUser(body.username, hashedPassword, "user");
+        
         // trả về thông tin user mới tạo (không bao gồm password)
         return {
             id: newUser.id,
@@ -65,26 +58,20 @@ export class AuthService {
         };
     }
 
+    // Cấp Access Token mới bằng Refresh Token
     async refreshToken(refreshToken: string){
-        console.log(
-        "Refresh token nhận được:",
-        refreshToken
-    );
+        console.log("Refresh token nhận được:",refreshToken );
         try {
-            const payload = this.jwtService.verify(refreshToken, {
-                secret: 'my-secretKey'
-            });
-console.log(
-            "Payload:",
-            payload
-        );
+             // Xác thực Refresh Token
+            const payload = this.jwtService.verify(refreshToken, { secret: 'my-secretKey'});
+            // Tạo payload mới
             const newPayload = {
                 sub: payload.sub,
                 username: payload.username,
                 role: payload.role,
             };
 
-            const accessToken = this.jwtService.sign(newPayload, {expiresIn: "1m",});
+            const accessToken = this.jwtService.sign(newPayload, {expiresIn: "1m",});// Sinh Access Token mới
 
             return {
                 access_token: accessToken,
